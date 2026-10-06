@@ -345,7 +345,10 @@ pub fn opt(comptime parser: anytype) Parser(?ParserResult(@TypeOf(parser))) {
             const res = try parser.parse(allocator, str);
             return switch (res.value) {
                 .ok => |value| Res.ok(res.index, value),
-                .err => Res.ok(0, null),
+                .err => {
+                    if (res.index == 0) return Res.ok(0, null);
+                    return Res.err(res.index);
+                }
             };
         }
     }.parse };
